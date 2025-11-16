@@ -1,0 +1,16 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Figma exports
+*.svg
+*.png
+*.jpg
+
+# Editors
+.vscode/
+.idea/
+
+# Node
+node_modules/
+dist/
