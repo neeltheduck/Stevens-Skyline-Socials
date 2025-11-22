@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar } from './components/Calendar';
 import { EventDetails } from './components/EventDetails';
 import { CreateEvent } from './components/CreateEvent';
 import { MyRegisteredEvents } from './components/MyRegisteredEvents';
+import { MyCreatedEvents } from './components/MyCreatedEvents';
+import { EditEvent } from './components/EditEvent';
+import { Login } from './components/Login';
+import { Register } from './components/Register';
 import { Navigation } from './components/Navigation';
 
 export type Event = {
@@ -13,86 +17,54 @@ export type Event = {
   category: string;
   attendees: number;
   manager: string;
+  createdBy?: string;
   description: string;
 };
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'calendar' | 'event-details' | 'create-event' | 'my-events'>('calendar');
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [currentPage, setCurrentPage] = useState<'calendar' | 'event-details' | 'create-event' | 'my-events' | 'my-created' | 'edit-event' | 'login' | 'register'>(token ? 'calendar' : 'login');
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
-  const [registeredEventIds, setRegisteredEventIds] = useState<string[]>(['1', '3']);
+  const [currentUser, setCurrentUser] = useState<{ id: string; email: string; firstName: string; lastName: string } | null>(null);
+  const [registeredEventIds, setRegisteredEventIds] = useState<string[]>([]);
   
   const [events, setEvents] = useState<Event[]>([
-    {
-      id: '1',
-      name: 'Tech Talk: AI & ML',
-      date: '2025-11-05',
-      time: '18:00',
-      category: 'Academic',
-      attendees: 45,
-      manager: 'Computer Science Society',
-      description: 'Join us for an exciting evening exploring the latest developments in artificial intelligence and machine learning. Industry professionals will share insights on current trends and future opportunities in the field.'
-    },
-    {
-      id: '2',
-      name: 'Basketball Tournament',
-      date: '2025-11-08',
-      time: '15:00',
-      category: 'Sports',
-      attendees: 32,
-      manager: 'Athletics Club',
-      description: 'Annual inter-department basketball tournament. Form your teams and compete for the championship trophy. All skill levels welcome!'
-    },
-    {
-      id: '3',
-      name: 'Fall Career Fair',
-      date: '2025-11-12',
-      time: '10:00',
-      category: 'Career',
-      attendees: 156,
-      manager: 'Career Services',
-      description: 'Meet with top employers from various industries. Bring your resume and dress professionally. Great opportunity to network and explore internship and full-time positions.'
-    },
-    {
-      id: '4',
-      name: 'Open Mic Night',
-      date: '2025-11-15',
-      time: '19:00',
-      category: 'Social',
-      attendees: 28,
-      manager: 'Student Activities Board',
-      description: 'Showcase your talent or enjoy performances from fellow students. Music, poetry, comedy - all forms of expression welcome. Free snacks and refreshments provided.'
-    },
-    {
-      id: '5',
-      name: 'Study Group: Finals Prep',
-      date: '2025-11-20',
-      time: '14:00',
-      category: 'Academic',
-      attendees: 18,
-      manager: 'Study Hub',
-      description: 'Collaborative study session to prepare for upcoming finals. Quiet study spaces and group discussion areas available. Tutors will be on hand to help with difficult concepts.'
-    },
-    {
-      id: '6',
-      name: 'Thanksgiving Potluck',
-      date: '2025-11-22',
-      time: '17:00',
-      category: 'Social',
-      attendees: 67,
-      manager: 'International Student Association',
-      description: 'Celebrate Thanksgiving with the Stevens community! Bring a dish to share and enjoy food from around the world. A great way to connect with friends before the holiday break.'
-    },
-    {
-      id: '7',
-      name: 'Hackathon 2025',
-      date: '2025-11-16',
-      time: '09:00',
-      category: 'Technology',
-      attendees: 89,
-      manager: 'CS Club',
-      description: '24-hour hackathon with exciting challenges and prizes. Form teams, build innovative solutions, and compete for awards. Meals and snacks provided throughout the event.'
-    }
   ]);
+
+  useEffect(() => {
+    // fetch events from API on mount
+    fetch('/api/events')
+      .then(res => res.json())
+      .then((data: Event[]) => setEvents(data))
+      .catch(err => console.error('Failed to fetch events', err));
+
+    if (token) {
+      fetch('/api/me', { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => res.json())
+          .then(user => {
+            setCurrentUser(user);
+            // fetch registrations for this user
+            fetch('/api/registrations', { headers: { Authorization: `Bearer ${token}` } })
+              .then(res => res.json())
+              .then((regs: string[]) => setRegisteredEventIds(regs))
+              .catch(() => setRegisteredEventIds([]));
+          })
+        .catch(() => {
+          // invalid token, clear
+          localStorage.removeItem('token');
+          setToken(null);
+        });
+    }
+  }, []);
+
+  // enforce authentication for site pages: redirect to login when not authenticated
+  useEffect(() => {
+    // If there's no authenticated user and no token, force login.
+    // If a token exists we wait for `/api/me` to validate it instead of immediately redirecting.
+    if (!currentUser && !token && currentPage !== 'login' && currentPage !== 'register') {
+      setCurrentPage('login');
+    }
+  }, [currentUser, currentPage]);
 
   const handleEventClick = (eventId: string) => {
     setSelectedEventId(eventId);
@@ -100,28 +72,85 @@ function App() {
   };
 
   const handleRSVP = (eventId: string) => {
+    if (!token || !currentUser) return;
     if (!registeredEventIds.includes(eventId)) {
-      setRegisteredEventIds([...registeredEventIds, eventId]);
+      // call API to register
+      fetch(`/api/events/${eventId}/register`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
+        .then(res => res.json())
+        .then((data: { eventId: string; attendees: number }) => {
+          setRegisteredEventIds(prev => [...prev, eventId]);
+          setEvents(prev => prev.map(e => e.id === eventId ? { ...e, attendees: data.attendees } : e));
+        })
+        .catch(err => console.error('Failed to persist RSVP', err));
     }
     setCurrentPage('my-events');
   };
 
+  const handleUnregister = (eventId: string) => {
+    if (!token || !currentUser) return;
+    if (registeredEventIds.includes(eventId)) {
+      fetch(`/api/events/${eventId}/register`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+        .then(res => res.json())
+        .then((data: { eventId: string; attendees: number }) => {
+          setRegisteredEventIds(prev => prev.filter(id => id !== eventId));
+          setEvents(prev => prev.map(e => e.id === eventId ? { ...e, attendees: data.attendees } : e));
+        })
+        .catch(err => console.error('Failed to persist unregister', err));
+    }
+  };
+
   const handleCreateEvent = (newEvent: Omit<Event, 'id' | 'attendees'>) => {
-    const event: Event = {
-      ...newEvent,
-      id: String(events.length + 1),
-      attendees: 0
-    };
-    setEvents([...events, event]);
-    setCurrentPage('calendar');
+    // persist to API
+    const payload = { ...newEvent, attendees: 0, createdBy: currentUser };
+    fetch('/api/events', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
+      .then(res => res.json())
+      .then((created: Event) => {
+        setEvents(prev => [...prev, created]);
+        setCurrentPage('calendar');
+      })
+      .catch(err => console.error('Failed to create event', err));
+  };
+
+  const handleUpdateEvent = (updated: Event) => {
+    // persist to API
+    fetch(`/api/events/${updated.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(updated) })
+      .then(res => res.json())
+      .then((saved: Event) => {
+        setEvents(prev => prev.map(e => e.id === saved.id ? saved : e));
+        setSelectedEventId(saved.id);
+        setCurrentPage('event-details');
+      })
+      .catch(err => console.error('Failed to update event', err));
+  };
+
+  const handleDeleteEvent = (eventId: string) => {
+    // delete on API then update local state
+    fetch(`/api/events/${eventId}`, { method: 'DELETE', headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) } })
+      .then(() => {
+        setEvents(prev => prev.filter(e => e.id !== eventId));
+        setRegisteredEventIds(prev => prev.filter(id => id !== eventId));
+        if (selectedEventId === eventId) {
+          setSelectedEventId(null);
+          setCurrentPage('calendar');
+        }
+      })
+      .catch(err => console.error('Failed to delete event', err));
   };
 
   const selectedEvent = events.find(e => e.id === selectedEventId);
   const registeredEvents = events.filter(e => registeredEventIds.includes(e.id));
+  const createdEvents = currentUser ? events.filter(e => e.createdBy === currentUser.id) : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
+      <Navigation currentPage={currentPage} onNavigate={(p: any) => {
+        // if trying to access protected pages, ensure authenticated
+        if ((p === 'create-event' || p === 'my-created' || p === 'my-events' || p === 'edit-event' || p === 'event-details') && !currentUser) {
+          setCurrentPage('login');
+        } else {
+          setCurrentPage(p as any);
+        }
+      }} onLogout={() => { localStorage.removeItem('token'); setToken(null); setCurrentUser(null); setRegisteredEventIds([]); setCurrentPage('login'); }} isAuthenticated={!!currentUser} />
       
       <main className="max-w-[1440px] mx-auto">
         {currentPage === 'calendar' && (
@@ -132,16 +161,79 @@ function App() {
           <EventDetails 
             event={selectedEvent} 
             onRSVP={handleRSVP}
+            onUnregister={handleUnregister}
             isRegistered={registeredEventIds.includes(selectedEvent.id)}
           />
         )}
         
         {currentPage === 'create-event' && (
-          <CreateEvent onCreateEvent={handleCreateEvent} />
+          <CreateEvent onCreateEvent={(payload) => {
+            if (!token) return; 
+            handleCreateEvent(payload);
+          }} />
+        )}
+
+        {currentPage === 'my-created' && (
+          <MyCreatedEvents
+            events={createdEvents}
+            onEventClick={handleEventClick}
+            onEdit={(id) => { setSelectedEventId(id); setCurrentPage('edit-event'); }}
+            onDelete={(id) => { if (!token) return; handleDeleteEvent(id); }}
+          />
+        )}
+
+        {currentPage === 'edit-event' && selectedEvent && (
+          <EditEvent
+            event={selectedEvent}
+            onSave={(updated) => { if (!token) return; handleUpdateEvent(updated); }}
+            onCancel={() => setCurrentPage('my-created')}
+          />
         )}
         
         {currentPage === 'my-events' && (
-          <MyRegisteredEvents events={registeredEvents} onEventClick={handleEventClick} />
+          <MyRegisteredEvents events={registeredEvents} onEventClick={handleEventClick} onUnregister={(id) => { if (!token) return; handleUnregister(id); }} />
+        )}
+
+        {currentPage === 'login' && (
+          <Login
+            onLogin={(tkn: string, user: any) => {
+              localStorage.setItem('token', tkn);
+              setToken(tkn);
+              setCurrentUser(user);
+              // fetch fresh events and registrations
+              fetch('/api/events')
+                .then(res => res.json())
+                .then((data: Event[]) => setEvents(data))
+                .catch(() => {});
+              fetch('/api/registrations', { headers: { Authorization: `Bearer ${tkn}` } })
+                .then(res => res.json())
+                .then((regs: string[]) => setRegisteredEventIds(regs))
+                .catch(() => setRegisteredEventIds([]));
+              setCurrentPage('calendar');
+            }}
+            onSwitchToRegister={() => setCurrentPage('register')}
+          />
+        )}
+
+        {currentPage === 'register' && (
+          <Register
+            onRegisterSuccess={(tkn: string, user: any) => {
+              localStorage.setItem('token', tkn);
+              setToken(tkn);
+              setCurrentUser(user);
+              // fetch fresh events and registrations
+              fetch('/api/events')
+                .then(res => res.json())
+                .then((data: Event[]) => setEvents(data))
+                .catch(() => {});
+              fetch('/api/registrations', { headers: { Authorization: `Bearer ${tkn}` } })
+                .then(res => res.json())
+                .then((regs: string[]) => setRegisteredEventIds(regs))
+                .catch(() => setRegisteredEventIds([]));
+              setCurrentPage('calendar');
+            }}
+            onSwitchToLogin={() => setCurrentPage('login')}
+          />
         )}
       </main>
     </div>

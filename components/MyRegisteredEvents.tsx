@@ -5,9 +5,10 @@ import type { Event } from '../App';
 type MyRegisteredEventsProps = {
   events: Event[];
   onEventClick: (eventId: string) => void;
+  onUnregister?: (eventId: string) => void;
 };
 
-export function MyRegisteredEvents({ events, onEventClick }: MyRegisteredEventsProps) {
+export function MyRegisteredEvents({ events, onEventClick, onUnregister }: MyRegisteredEventsProps) {
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr + 'T00:00:00');
     return date.toLocaleDateString('en-US', { 
@@ -60,6 +61,16 @@ export function MyRegisteredEvents({ events, onEventClick }: MyRegisteredEventsP
                   <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded">
                     {event.category}
                   </span>
+                  {onUnregister && (
+                    <div className="mt-3">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onUnregister(event.id); }}
+                        className="mt-2 inline-block px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                      >
+                        Unregister
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

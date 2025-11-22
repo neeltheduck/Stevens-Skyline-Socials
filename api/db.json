@@ -1,0 +1,77 @@
+{
+  "events": [
+    {
+      "id": "1",
+      "name": "Tech Talk: AI & ML",
+      "date": "2025-11-05",
+      "time": "18:00",
+      "category": "Academic",
+      "attendees": 0,
+      "manager": "Computer Science Society",
+      "createdBy": "org-cs",
+      "description": "Join us for an exciting evening exploring the latest developments in artificial intelligence and machine learning. Industry professionals will share insights on current trends and future opportunities in the field."
+    },
+    {
+      "id": "2",
+      "name": "Spikeball Tournament",
+      "date": "2025-11-08",
+      "time": "15:00",
+      "category": "Sports",
+      "attendees": 0,
+      "manager": "Athletics Club",
+      "createdBy": "org-athletics",
+      "description": "Monthly spikeball tournament. Form your teams and compete for the championship. All skill levels welcome!"
+    },
+    {
+      "id": "1763783408408",
+      "name": "Elijah's Birthday Bash!",
+      "date": "2025-11-23",
+      "time": "19:30",
+      "category": "Social",
+      "attendees": 0,
+      "manager": "Elijah",
+      "createdBy": "user-1763783336981",
+      "description": "Come eat some cake as we wish Elijah happy birthday! If you want to of course."
+    }
+  ],
+  "users": [
+    {
+      "id": "user-demo",
+      "email": "demo@example.com",
+      "firstName": "Demo",
+      "lastName": "User",
+      "passwordHash": "$2a$08$hiFleruw69.veFX2IWSuA.UryGTJ83f9c0JY15pOpiYzH/BvsQkvq"
+    },
+    {
+      "id": "user-1763783336981",
+      "email": "ejoseph1@stevens.edu",
+      "firstName": "Elijah",
+      "lastName": "Joseph",
+      "passwordHash": "$2a$08$/lf0H4iq7koC8cHFXu2tBOl5ppmtr.kg3E7QqLQ8nPq5X1WmlWIrW"
+    },
+    {
+      "id": "user-1763783739556",
+      "email": "abaker2@stevens.edu",
+      "firstName": "Andrew",
+      "lastName": "Baker",
+      "passwordHash": "$2a$08$Zg3gubA8y9jB77lfQXUNMePQ6g3Lx7Nf8/uImJtJfPXihL1HTFXpm"
+    }
+  ],
+  "sessions": {
+    "tkn-1763783337056-90489": "user-1763783336981",
+    "tkn-1763783449302-30157": "user-1763783336981",
+    "tkn-1763783505757-68704": "user-1763783336981",
+    "tkn-1763783739622-6804": "user-1763783739556",
+    "tkn-1763783916864-84947": "user-1763783336981",
+    "tkn-1763784022097-65001": "user-1763783336981",
+    "tkn-1763784113312-53922": "user-1763783336981",
+    "tkn-1763784203174-57616": "user-1763783336981",
+    "tkn-1763784406272-73518": "user-1763783336981"
+  },
+  "registrations": [
+    {
+      "eventId": "1763783408408",
+      "userId": "user-1763783739556"
+    }
+  ]
+}

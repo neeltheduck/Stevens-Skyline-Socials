@@ -1,0 +1,10 @@
+{
+  "name": "stevens-skyline-socials",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Repo root helper to start frontend and api together during development",
+  "scripts": {
+    "dev": "node scripts/start-both.js",
+    "start": "npm run dev"
+  }
+}

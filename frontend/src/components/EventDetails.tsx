@@ -5,10 +5,11 @@ import type { Event } from '../App';
 type EventDetailsProps = {
   event: Event;
   onRSVP: (eventId: string) => void;
+  onUnregister?: (eventId: string) => void;
   isRegistered: boolean;
 };
 
-export function EventDetails({ event, onRSVP, isRegistered }: EventDetailsProps) {
+export function EventDetails({ event, onRSVP, onUnregister, isRegistered }: EventDetailsProps) {
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr + 'T00:00:00');
     return date.toLocaleDateString('en-US', { 
@@ -79,17 +80,21 @@ export function EventDetails({ event, onRSVP, isRegistered }: EventDetailsProps)
           <p className="text-gray-700 leading-relaxed">{event.description}</p>
         </div>
 
-        <button
-          onClick={() => onRSVP(event.id)}
-          disabled={isRegistered}
-          className={`w-full py-4 rounded transition-colors ${
-            isRegistered
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-gray-900 text-white hover:bg-gray-800'
-          }`}
-        >
-          {isRegistered ? 'Already Registered' : 'RSVP to Event'}
-        </button>
+        {isRegistered ? (
+          <button
+            onClick={() => onUnregister && onUnregister(event.id)}
+            className="w-full py-4 rounded bg-red-600 text-white hover:bg-red-700 transition-colors"
+          >
+            Unregister from Event
+          </button>
+        ) : (
+          <button
+            onClick={() => onRSVP(event.id)}
+            className="w-full py-4 rounded bg-gray-900 text-white hover:bg-gray-800 transition-colors"
+          >
+            RSVP to Event
+          </button>
+        )}
       </div>
     </div>
   );
