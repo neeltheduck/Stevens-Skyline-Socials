@@ -32,6 +32,28 @@
       "manager": "Elijah",
       "createdBy": "user-1763783336981",
       "description": "Come eat some cake as we wish Elijah happy birthday! If you want to of course."
+    },
+    {
+      "id": "1764099998064",
+      "name": "Islamics",
+      "date": "2025-11-25",
+      "time": "14:46",
+      "category": "Academic",
+      "attendees": 0,
+      "manager": "Prof. Teke",
+      "createdBy": "user-1764034188975",
+      "description": "Islam Studies"
+    },
+    {
+      "id": "1764113204253",
+      "name": "Neel Meyyur",
+      "date": "2025-11-25",
+      "time": "18:26",
+      "category": "Social",
+      "attendees": 0,
+      "manager": "Neel",
+      "createdBy": "user-1764034188975",
+      "description": "Hang out with Neel"
     }
   ],
   "users": [
@@ -55,6 +77,13 @@
       "firstName": "Andrew",
       "lastName": "Baker",
       "passwordHash": "$2a$08$Zg3gubA8y9jB77lfQXUNMePQ6g3Lx7Nf8/uImJtJfPXihL1HTFXpm"
+    },
+    {
+      "id": "user-1764034188975",
+      "email": "neel@neel.com",
+      "firstName": "neel",
+      "lastName": "meyyur",
+      "passwordHash": "$2a$08$Nm1NGxIBMs9jl3s3a3l/WO3kZNUtrUeRGAora6izuhGM1MsnJp0Mi"
     }
   ],
   "sessions": {
@@ -66,12 +95,32 @@
     "tkn-1763784022097-65001": "user-1763783336981",
     "tkn-1763784113312-53922": "user-1763783336981",
     "tkn-1763784203174-57616": "user-1763783336981",
-    "tkn-1763784406272-73518": "user-1763783336981"
+    "tkn-1763784406272-73518": "user-1763783336981",
+    "tkn-1764034189254-54416": "user-1764034188975",
+    "tkn-1764099047253-91758": "user-1764034188975",
+    "tkn-1764108867881-22753": "user-1764034188975",
+    "tkn-1764114259477-47935": "user-1764034188975"
   },
   "registrations": [
     {
       "eventId": "1763783408408",
       "userId": "user-1763783739556"
+    },
+    {
+      "eventId": "1763783408408",
+      "userId": "user-1764034188975"
+    },
+    {
+      "eventId": "1",
+      "userId": "user-1764034188975"
+    },
+    {
+      "eventId": "1764113204253",
+      "userId": "user-1764034188975"
+    },
+    {
+      "eventId": "1764099998064",
+      "userId": "user-1764034188975"
     }
   ]
 }
