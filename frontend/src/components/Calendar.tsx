@@ -63,7 +63,7 @@ export function Calendar({ events, onEventClick }: CalendarProps) {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-8 scale-90 origin-top mx-auto">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
         <div className="flex items-center justify-center gap-8 mb-8">
           <button 

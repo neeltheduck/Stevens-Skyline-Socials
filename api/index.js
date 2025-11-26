@@ -128,19 +128,24 @@ app.post('/api/events', (req, res) => {
   const db = readDB();
   const payload = req.body;
   const id = String(Date.now());
+  const eventId = id;
   const newEvent = {
     id,
     name: payload.name || 'Untitled',
     date: payload.date || '',
     time: payload.time || '',
     category: payload.category || 'Academic',
-    attendees: 0,
+    attendees: 1,
     manager: payload.manager || user.email,
     createdBy: user.id,
     description: payload.description || ''
   };
+  db.registrations = db.registrations || [];
   db.events = db.events || [];
   db.events.push(newEvent);
+  if (!db.registrations.find(r => r.eventId === eventId && r.userId === user.id)) {
+    db.registrations.push({ eventId, userId: user.id });
+  }
   writeDB(db);
   res.status(201).json(newEvent);
 });

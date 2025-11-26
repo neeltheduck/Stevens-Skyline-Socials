@@ -108,12 +108,21 @@ function App() {
   };
 
   const handleCreateEvent = (newEvent: Omit<Event, 'id' | 'attendees'>) => {
-    // persist to API
-    const payload = { ...newEvent, attendees: 0, createdBy: currentUser };
-    fetch('/api/events', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(payload) })
+    const payload = { ...newEvent, attendees: 0, createdBy: currentUser?.id };
+    fetch('/api/events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify(payload)
+    })
       .then(res => res.json())
       .then((created: Event) => {
         setEvents(prev => [...prev, created]);
+        if (currentUser) {
+          setRegisteredEventIds(prev => [...prev, created.id]); // add this line
+        }
         setCurrentPage('calendar');
       })
       .catch(err => console.error('Failed to create event', err));

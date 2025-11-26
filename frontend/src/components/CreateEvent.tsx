@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { Event } from "../App";
 
+
 type CreateEventProps = {
   onCreateEvent: (event: Omit<Event, "id" | "attendees">) => void;
 };
@@ -30,6 +31,14 @@ export function CreateEvent({ onCreateEvent }: CreateEventProps) {
       [e.target.name]: e.target.value,
     });
   };
+
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  const minDate = `${currentYear}-${month}-${day}`; // today
+  const maxDate = `${currentYear + 4}-12-31`; // four years from now
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-6">
@@ -82,6 +91,8 @@ export function CreateEvent({ onCreateEvent }: CreateEventProps) {
                     value={formData.date}
                     onChange={handleChange}
                     required
+                    min={minDate}
+                    max={maxDate}
                     className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                   />
                 </div>
