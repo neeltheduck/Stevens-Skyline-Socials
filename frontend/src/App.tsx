@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Calendar } from './components/Calendar';
 import { EventDetails } from './components/EventDetails';
 import { CreateEvent } from './components/CreateEvent';
@@ -27,7 +27,7 @@ function App() {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<{ id: string; email: string; firstName: string; lastName: string } | null>(null);
   const [registeredEventIds, setRegisteredEventIds] = useState<string[]>([]);
-  
+
   const [events, setEvents] = useState<Event[]>([
   ]);
 
@@ -40,19 +40,27 @@ function App() {
 
     if (token) {
       fetch('/api/me', { headers: { Authorization: `Bearer ${token}` } })
-        .then(res => res.json())
-          .then(user => {
-            setCurrentUser(user);
-            // fetch registrations for this user
-            fetch('/api/registrations', { headers: { Authorization: `Bearer ${token}` } })
-              .then(res => res.json())
-              .then((regs: string[]) => setRegisteredEventIds(regs))
-              .catch(() => setRegisteredEventIds([]));
-          })
+        .then(res => res.ok ? res.json() : null)     // line changed: check res.ok
+        .then(user => {
+          if (!user) {                              // line added: handle invalid token
+            localStorage.removeItem('token');
+            setToken(null);
+            setCurrentUser(null);
+            setRegisteredEventIds([]);
+            return;
+          }
+          setCurrentUser(user);
+
+          fetch('/api/registrations', { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.ok ? res.json() : [])  // line changed: default empty array if API fails
+            .then((regs: any) => setRegisteredEventIds(Array.isArray(regs) ? regs : [])) // line changed: ensure array
+            .catch(() => setRegisteredEventIds([]));
+        })
         .catch(() => {
-          // invalid token, clear
           localStorage.removeItem('token');
           setToken(null);
+          setCurrentUser(null);
+          setRegisteredEventIds([]);
         });
     }
   }, []);
@@ -138,7 +146,7 @@ function App() {
   };
 
   const selectedEvent = events.find(e => e.id === selectedEventId);
-  const registeredEvents = events.filter(e => registeredEventIds.includes(e.id));
+  const registeredEvents = events.filter(e => Array.isArray(registeredEventIds) && registeredEventIds.includes(e.id));
   const createdEvents = currentUser ? events.filter(e => e.createdBy === currentUser.id) : [];
 
   return (
@@ -151,24 +159,24 @@ function App() {
           setCurrentPage(p as any);
         }
       }} onLogout={() => { localStorage.removeItem('token'); setToken(null); setCurrentUser(null); setRegisteredEventIds([]); setCurrentPage('login'); }} isAuthenticated={!!currentUser} />
-      
+
       <main className="max-w-[1440px] mx-auto">
         {currentPage === 'calendar' && (
           <Calendar events={events} onEventClick={handleEventClick} />
         )}
-        
+
         {currentPage === 'event-details' && selectedEvent && (
-          <EventDetails 
-            event={selectedEvent} 
+          <EventDetails
+            event={selectedEvent}
             onRSVP={handleRSVP}
             onUnregister={handleUnregister}
-            isRegistered={registeredEventIds.includes(selectedEvent.id)}
+            isRegistered={Array.isArray(registeredEventIds) && registeredEventIds.includes(selectedEvent.id)}
           />
         )}
-        
+
         {currentPage === 'create-event' && (
           <CreateEvent onCreateEvent={(payload) => {
-            if (!token) return; 
+            if (!token) return;
             handleCreateEvent(payload);
           }} />
         )}
@@ -189,7 +197,7 @@ function App() {
             onCancel={() => setCurrentPage('my-created')}
           />
         )}
-        
+
         {currentPage === 'my-events' && (
           <MyRegisteredEvents events={registeredEvents} onEventClick={handleEventClick} onUnregister={(id) => { if (!token) return; handleUnregister(id); }} />
         )}
@@ -204,7 +212,7 @@ function App() {
               fetch('/api/events')
                 .then(res => res.json())
                 .then((data: Event[]) => setEvents(data))
-                .catch(() => {});
+                .catch(() => { });
               fetch('/api/registrations', { headers: { Authorization: `Bearer ${tkn}` } })
                 .then(res => res.json())
                 .then((regs: string[]) => setRegisteredEventIds(regs))
@@ -225,7 +233,7 @@ function App() {
               fetch('/api/events')
                 .then(res => res.json())
                 .then((data: Event[]) => setEvents(data))
-                .catch(() => {});
+                .catch(() => { });
               fetch('/api/registrations', { headers: { Authorization: `Bearer ${tkn}` } })
                 .then(res => res.json())
                 .then((regs: string[]) => setRegisteredEventIds(regs))

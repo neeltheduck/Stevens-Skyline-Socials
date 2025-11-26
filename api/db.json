@@ -54,6 +54,17 @@
       "manager": "Neel",
       "createdBy": "user-1764034188975",
       "description": "Hang out with Neel"
+    },
+    {
+      "id": "1764127158283",
+      "name": "Andrew Baker",
+      "date": "2025-11-26",
+      "time": "15:00",
+      "category": "Academic",
+      "attendees": 0,
+      "manager": "Hargun",
+      "createdBy": "user-1763783739556",
+      "description": "fqwfqf"
     }
   ],
   "users": [
@@ -99,7 +110,8 @@
     "tkn-1764034189254-54416": "user-1764034188975",
     "tkn-1764099047253-91758": "user-1764034188975",
     "tkn-1764108867881-22753": "user-1764034188975",
-    "tkn-1764114259477-47935": "user-1764034188975"
+    "tkn-1764114259477-47935": "user-1764034188975",
+    "tkn-1764127093441-93470": "user-1763783739556"
   },
   "registrations": [
     {

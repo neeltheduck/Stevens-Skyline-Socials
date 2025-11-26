@@ -1,4 +1,3 @@
-import React from 'react';
 import { Calendar, Clock } from 'lucide-react';
 import type { Event } from '../App';
 
