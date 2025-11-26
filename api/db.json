@@ -35,7 +35,7 @@
     },
     {
       "id": "1764099998064",
-      "name": "Islamics",
+      "name": "Islamic Studies Study Session",
       "date": "2025-11-25",
       "time": "14:46",
       "category": "Academic",
@@ -65,6 +65,39 @@
       "manager": "Advisor",
       "createdBy": "user-1763783739556",
       "description": "Transcript check"
+    },
+    {
+      "id": "1764192804092",
+      "name": "Career Fair",
+      "date": "2025-11-30",
+      "time": "21:33",
+      "category": "Career",
+      "attendees": 1,
+      "manager": "Anonymous",
+      "createdBy": "user-1763783336981",
+      "description": "N/A"
+    },
+    {
+      "id": "1764192842545",
+      "name": "Tech Fair",
+      "date": "2025-11-28",
+      "time": "19:33",
+      "category": "Technology",
+      "attendees": 1,
+      "manager": "Elijah Joseph",
+      "createdBy": "user-1763783336981",
+      "description": "Tech Fair"
+    },
+    {
+      "id": "1764192869956",
+      "name": "Art Fair",
+      "date": "2025-11-27",
+      "time": "18:35",
+      "category": "Arts",
+      "attendees": 1,
+      "manager": "Elijah Joseph",
+      "createdBy": "user-1763783336981",
+      "description": "Show your best art!"
     }
   ],
   "users": [
@@ -116,7 +149,9 @@
     "tkn-1764180527616-26147": "user-1763783739556",
     "tkn-1764187028068-15035": "user-1763783336981",
     "tkn-1764187047998-29198": "user-1763783739556",
-    "tkn-1764188174161-27718": "user-1763783739556"
+    "tkn-1764188174161-27718": "user-1763783739556",
+    "tkn-1764190176096-31814": "user-1763783336981",
+    "tkn-1764192968731-40456": "user-1763783336981"
   },
   "registrations": [
     {
@@ -146,6 +181,18 @@
     {
       "eventId": "1764185376014",
       "userId": "user-1763783739556"
+    },
+    {
+      "eventId": "1764192804092",
+      "userId": "user-1763783336981"
+    },
+    {
+      "eventId": "1764192842545",
+      "userId": "user-1763783336981"
+    },
+    {
+      "eventId": "1764192869956",
+      "userId": "user-1763783336981"
     }
   ]
 }

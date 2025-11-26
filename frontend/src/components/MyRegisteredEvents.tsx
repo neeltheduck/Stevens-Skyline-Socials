@@ -1,6 +1,7 @@
 import React from 'react';
 import { Calendar, Clock } from 'lucide-react';
 import type { Event } from '../App';
+import { getCategoryClasses } from '../utils/categoryColors';
 
 type MyRegisteredEventsProps = {
   events: Event[];
@@ -58,7 +59,7 @@ export function MyRegisteredEvents({ events, onEventClick, onUnregister }: MyReg
                 </div>
                 
                 <div className="mt-4 pt-4 border-t border-gray-200">
-                  <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded">
+                  <span className={`inline-block px-3 py-1 rounded ${getCategoryClasses(event.category)}`}>
                     {event.category}
                   </span>
                   <div className="mt-3">

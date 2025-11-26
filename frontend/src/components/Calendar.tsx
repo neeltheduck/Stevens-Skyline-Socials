@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Event } from '../App';
+import { getCategoryClasses } from '../utils/categoryColors';
 
 type CalendarProps = {
   events: Event[];
@@ -48,15 +49,18 @@ export function Calendar({ events, onEventClick }: CalendarProps) {
       <div key={day} className="border border-gray-200 bg-white p-2 min-h-[120px]">
         <div className="text-gray-700 mb-2">{day}</div>
         <div className="space-y-1">
-          {dayEvents.map(event => (
-            <div
-              key={event.id}
-              onClick={() => onEventClick(event.id)}
-              className="text-sm text-gray-800 bg-gray-100 px-2 py-1 rounded cursor-pointer hover:bg-gray-200 transition-colors"
-            >
-              {event.name}
-            </div>
-          ))}
+          {dayEvents.map(event => {
+            const catClasses = getCategoryClasses(event.category);
+            return (
+              <div
+                key={event.id}
+                onClick={() => onEventClick(event.id)}
+                className={`text-sm px-2 py-1 rounded cursor-pointer transition-colors ${catClasses} hover:opacity-90`}
+              >
+                {event.name}
+              </div>
+            );
+          })}
         </div>
       </div>
     );
@@ -73,8 +77,8 @@ export function Calendar({ events, onEventClick }: CalendarProps) {
             <ChevronLeft className="w-6 h-6 text-gray-600" />
           </button>
           
-          <h2 className="text-gray-900">
-            Stevens Skyline Socials – {monthNames[month]} {year}
+          <h2 className="text-gray-900 font-semibold text-3xl">
+            {monthNames[month]} {year}
           </h2>
           
           <button 

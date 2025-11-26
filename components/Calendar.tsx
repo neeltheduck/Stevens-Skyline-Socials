@@ -73,8 +73,8 @@ export function Calendar({ events, onEventClick }: CalendarProps) {
             <ChevronLeft className="w-6 h-6 text-gray-600" />
           </button>
           
-          <h2 className="text-gray-900">
-            Stevens Skyline Socials – {monthNames[month]} {year}
+          <h2 className="text-gray-900 font-semibold text-lg">
+            {monthNames[month]} {year}
           </h2>
           
           <button 
