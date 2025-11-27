@@ -82,7 +82,7 @@ export function Register({ onRegisterSuccess, onSwitchToLogin }: RegisterProps) 
             <input type="password" className="w-full px-3 py-2 border" value={password} onChange={e => setPassword(e.target.value)} required />
           </div>
           <div className="flex items-center justify-between">
-            <button type="submit" className="bg-gray-900 text-white px-4 py-2 rounded">Create Account</button>
+            <button type="submit" className="bg-[#9D1535] text-white px-4 py-2 rounded">Create Account</button>
             <button type="button" onClick={onSwitchToLogin} className="text-sm text-blue-600">Already have an account?</button>
           </div>
         </form>

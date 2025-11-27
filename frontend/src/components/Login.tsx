@@ -54,7 +54,7 @@ export function Login({ onLogin, onSwitchToRegister }: LoginProps) {
             <input type="password" className="w-full px-3 py-2 border" value={password} onChange={e => setPassword(e.target.value)} required />
           </div>
           <div className="flex items-center justify-between">
-            <button type="submit" className="bg-gray-900 text-white px-4 py-2 rounded">Login</button>
+            <button type="submit" className="bg-[#9D1535]  text-white px-4 py-2 rounded">Login</button>
             <button type="button" onClick={onSwitchToRegister} className="text-sm text-blue-600">Create account</button>
           </div>
         </form>
